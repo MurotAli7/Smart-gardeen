@@ -1,0 +1,151 @@
+body {
+    background-color: #0a0f0a;
+    color: #e0ffe6;
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    padding: 15px;
+  }
+  
+  .dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: #00ff99;
+    margin-bottom: 20px;
+  }
+  
+  .header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  .time {
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+  
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 25px;
+  }
+  
+  .card {
+    background: #111;
+    border: 1px solid #00ff99;
+    border-radius: 8px;
+    padding: 12px 8px;
+    text-align: center;
+    transition: 0.3s;
+  }
+  
+  .card:hover {
+    background: #0f1a0f;
+    transform: translateY(-3px);
+  }
+  
+  .card h3 {
+    color: #66ffb2;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+  }
+  
+  .card p {
+    font-size: 1.3rem;
+    color: #00ff99;
+    margin: 0;
+  }
+  
+  .charts {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .chartBox {
+    background: #111;
+    border: 1px solid #004d26;
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: 0 0 10px rgba(0, 255, 100, 0.2);
+    height: 300px; /* Fixed height for charts */
+  }
+  
+  .chartBox h3 {
+    text-align: center;
+    color: #00ff99;
+    margin-bottom: 10px;
+    font-size: 1rem;
+  }
+  
+  .chart-container {
+    height: 230px; /* Fixed container height for charts */
+    position: relative;
+  }
+  
+  /* Media query for larger screens */
+  @media (min-width: 768px) {
+    body {
+      padding: 20px;
+    }
+    
+    .header {
+      flex-direction: row;
+      justify-content: space-between;
+      text-align: left;
+    }
+    
+    .header h1 {
+      font-size: 2rem;
+      margin-bottom: 0;
+    }
+    
+    .time {
+      font-size: 1.4rem;
+    }
+    
+    .cards {
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 15px;
+    }
+    
+    .card {
+      padding: 15px;
+      border-radius: 10px;
+    }
+    
+    .card h3 {
+      font-size: 1rem;
+    }
+    
+    .card p {
+      font-size: 1.5rem;
+    }
+    
+    .charts {
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+    }
+    
+    .chartBox {
+      padding: 15px;
+      border-radius: 12px;
+      height: auto; /* Auto height on larger screens */
+    }
+    
+    .chartBox h3 {
+      font-size: 1.2rem;
+    }
+    
+    .chart-container {
+      height: 250px; /* Adjust height for larger screens */
+    }
+  }
