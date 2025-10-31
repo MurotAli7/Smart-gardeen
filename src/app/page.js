@@ -1,9 +1,9 @@
-import App from "@/smart-garden/page";
+import Page from './smart-garden/page';
 import './styles/styles.css'
 export default function Home() {
   return (
     <div className="">
-      <App/>      
+      <Page/>      
     </div>
   );
 }
