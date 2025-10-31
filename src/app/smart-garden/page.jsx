@@ -2,12 +2,46 @@
 import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 
+// Chart komponentlarini dynamic import qilish
 const Line = dynamic(() => import("react-chartjs-2").then((mod) => mod.Line), {
   ssr: false,
+  loading: () => <div className="chart-loading">Loading chart...</div>
 });
 const Pie = dynamic(() => import("react-chartjs-2").then((mod) => mod.Pie), {
   ssr: false,
+  loading: () => <div className="chart-loading">Loading chart...</div>
 });
+
+// Chart.js va pluginlarni faqat client tomonda import qilish
+const initializeChartJS = async () => {
+  if (typeof window === 'undefined') return null;
+
+  const {
+    Chart: ChartJS,
+    LineElement,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    Tooltip,
+    Legend,
+    ArcElement,
+  } = await import("chart.js");
+  
+  const zoomPlugin = await import("chartjs-plugin-zoom");
+  
+  ChartJS.register(
+    LineElement,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    Tooltip,
+    Legend,
+    ArcElement,
+    zoomPlugin.default
+  );
+  
+  return ChartJS;
+};
 
 export default function Page() {
   const [data, setData] = useState([]);
@@ -21,40 +55,21 @@ export default function Page() {
   });
   const [time, setTime] = useState(new Date().toLocaleTimeString());
   const [isClient, setIsClient] = useState(false);
+  const [chartReady, setChartReady] = useState(false);
   const chartRefs = useRef({});
 
   useEffect(() => {
     setIsClient(true);
     
-    if (typeof window !== "undefined") {
-      const initializeCharts = async () => {
-        const {
-          Chart: ChartJS,
-          LineElement,
-          CategoryScale,
-          LinearScale,
-          PointElement,
-          Tooltip,
-          Legend,
-          ArcElement,
-        } = await import("chart.js");
-        const zoomPlugin = await import("chartjs-plugin-zoom");
+    // Chart.js ni initialize qilish
+    const initCharts = async () => {
+      await initializeChartJS();
+      setChartReady(true);
+    };
 
-        ChartJS.register(
-          LineElement,
-          CategoryScale,
-          LinearScale,
-          PointElement,
-          Tooltip,
-          Legend,
-          ArcElement,
-          zoomPlugin.default
-        );
-      };
+    initCharts();
 
-      initializeCharts();
-    }
-
+    // Dastlabki ma'lumotlarni yaratish (oxirgi 50 ta vaqt)
     const initialData = [];
     const now = new Date();
     for (let i = 49; i >= 0; i--) {
@@ -72,17 +87,18 @@ export default function Page() {
     setData(initialData);
     setCurrent(initialData[49]);
 
+    // Yangi ma'lumot qo'shish
     const interval = setInterval(() => {
       const now = new Date();
       setTime(now.toLocaleTimeString());
 
       const newValues = {
-        harorat: +(25 + Math.random() * 10 - 5).toFixed(1), // 20-30 oralig'ida
-        havoNamligi: +(50 + Math.random() * 20 - 10).toFixed(1), // 40-60 oralig'ida
-        tuproqNamligi: +(60 + Math.random() * 20 - 10).toFixed(1), // 50-70 oralig'ida
-        yoruglik: +(5000 + Math.random() * 2000 - 1000).toFixed(0), // 4000-6000 oralig'ida
-        kislorod: +(78 + Math.random() * 4 - 2).toFixed(1), // 76-80 oralig'ida
-        co2: +(450 + Math.random() * 100 - 50).toFixed(0), // 400-500 oralig'ida
+        harorat: +(25 + Math.random() * 10 - 5).toFixed(1),
+        havoNamligi: +(50 + Math.random() * 20 - 10).toFixed(1),
+        tuproqNamligi: +(60 + Math.random() * 20 - 10).toFixed(1),
+        yoruglik: +(5000 + Math.random() * 2000 - 1000).toFixed(0),
+        kislorod: +(78 + Math.random() * 4 - 2).toFixed(1),
+        co2: +(450 + Math.random() * 100 - 50).toFixed(0),
       };
       
       setCurrent(newValues);
@@ -151,7 +167,6 @@ export default function Page() {
           maxTicksLimit: 8,
           maxRotation: 0,
           callback: function(value, index, values) {
-            // Faqat har 5-chi labelni ko'rsatish
             return index % 5 === 0 ? this.getLabelForValue(value) : '';
           }
         },
@@ -193,16 +208,16 @@ export default function Page() {
     },
     elements: {
       point: {
-        radius: 0, // Nuqtalarni ko'rsatmaslik
+        radius: 0,
         hoverRadius: 6,
         hoverBackgroundColor: '#00ff99'
       },
       line: {
-        tension: 0.4 // Silliq chiziq
+        tension: 0.4
       }
     },
     animation: {
-      duration: 0 // Yangi ma'lumot qo'shilganda animatsiyasiz
+      duration: 0
     },
     transitions: {
       zoom: {
@@ -305,56 +320,72 @@ export default function Page() {
         <div className="chartBox">
           <div className="chart-header">
             <h3>Harorat (°C)</h3>
-            <button className="reset-btn" onClick={() => resetZoom('harorat')}>Zoom Reset</button>
+            {chartReady && <button className="reset-btn" onClick={() => resetZoom('harorat')}>Zoom Reset</button>}
           </div>
           <div className="chart-container">
-            <Line 
-              ref={(ref) => chartRefs.current.harorat = ref}
-              data={makeDataset("harorat", "Harorat", "#00ff99")} 
-              options={chartOptions("Harorat", "#00ff99", "°C", 15, 35)} 
-            />
+            {chartReady ? (
+              <Line 
+                ref={(ref) => chartRefs.current.harorat = ref}
+                data={makeDataset("harorat", "Harorat", "#00ff99")} 
+                options={chartOptions("Harorat", "#00ff99", "°C", 15, 35)} 
+              />
+            ) : (
+              <div className="chart-loading">Chart loading...</div>
+            )}
           </div>
         </div>
 
         <div className="chartBox">
           <div className="chart-header">
             <h3>Havo namligi (%)</h3>
-            <button className="reset-btn" onClick={() => resetZoom('havoNamligi')}>Zoom Reset</button>
+            {chartReady && <button className="reset-btn" onClick={() => resetZoom('havoNamligi')}>Zoom Reset</button>}
           </div>
           <div className="chart-container">
-            <Line 
-              ref={(ref) => chartRefs.current.havoNamligi = ref}
-              data={makeDataset("havoNamligi", "Havo namligi", "#66ffb2")} 
-              options={chartOptions("Havo namligi", "#66ffb2", "%", 30, 70)} 
-            />
+            {chartReady ? (
+              <Line 
+                ref={(ref) => chartRefs.current.havoNamligi = ref}
+                data={makeDataset("havoNamligi", "Havo namligi", "#66ffb2")} 
+                options={chartOptions("Havo namligi", "#66ffb2", "%", 30, 70)} 
+              />
+            ) : (
+              <div className="chart-loading">Chart loading...</div>
+            )}
           </div>
         </div>
 
         <div className="chartBox">
           <div className="chart-header">
             <h3>Tuproq namligi (%)</h3>
-            <button className="reset-btn" onClick={() => resetZoom('tuproqNamligi')}>Zoom Reset</button>
+            {chartReady && <button className="reset-btn" onClick={() => resetZoom('tuproqNamligi')}>Zoom Reset</button>}
           </div>
           <div className="chart-container">
-            <Line 
-              ref={(ref) => chartRefs.current.tuproqNamligi = ref}
-              data={makeDataset("tuproqNamligi", "Tuproq namligi", "#33cc99")} 
-              options={chartOptions("Tuproq namligi", "#33cc99", "%", 40, 80)} 
-            />
+            {chartReady ? (
+              <Line 
+                ref={(ref) => chartRefs.current.tuproqNamligi = ref}
+                data={makeDataset("tuproqNamligi", "Tuproq namligi", "#33cc99")} 
+                options={chartOptions("Tuproq namligi", "#33cc99", "%", 40, 80)} 
+              />
+            ) : (
+              <div className="chart-loading">Chart loading...</div>
+            )}
           </div>
         </div>
 
         <div className="chartBox">
           <div className="chart-header">
             <h3>Yorug'lik (lux)</h3>
-            <button className="reset-btn" onClick={() => resetZoom('yoruglik')}>Zoom Reset</button>
+            {chartReady && <button className="reset-btn" onClick={() => resetZoom('yoruglik')}>Zoom Reset</button>}
           </div>
           <div className="chart-container">
-            <Line 
-              ref={(ref) => chartRefs.current.yoruglik = ref}
-              data={makeDataset("yoruglik", "Yorug'lik", "#99ffcc")} 
-              options={chartOptions("Yorug'lik", "#99ffcc", "lux", 3000, 7000)} 
-            />
+            {chartReady ? (
+              <Line 
+                ref={(ref) => chartRefs.current.yoruglik = ref}
+                data={makeDataset("yoruglik", "Yorug'lik", "#99ffcc")} 
+                options={chartOptions("Yorug'lik", "#99ffcc", "lux", 3000, 7000)} 
+              />
+            ) : (
+              <div className="chart-loading">Chart loading...</div>
+            )}
           </div>
         </div>
 
@@ -362,32 +393,36 @@ export default function Page() {
         <div className="chartBox">
           <h3>Kislorod miqdori (%)</h3>
           <div className="chart-container">
-            <Pie
-              data={{
-                labels: ["Kislorod", "Boshqa gazlar"],
-                datasets: [
-                  {
-                    data: [current.kislorod, 100 - current.kislorod],
-                    backgroundColor: ["#00ff99", "#333"],
-                    borderWidth: 1,
-                    borderColor: '#00ff99'
-                  },
-                ],
-              }}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    position: 'bottom',
-                    labels: {
-                      color: '#00ff99',
-                      padding: 20
+            {chartReady ? (
+              <Pie
+                data={{
+                  labels: ["Kislorod", "Boshqa gazlar"],
+                  datasets: [
+                    {
+                      data: [current.kislorod, 100 - current.kislorod],
+                      backgroundColor: ["#00ff99", "#333"],
+                      borderWidth: 1,
+                      borderColor: '#00ff99'
+                    },
+                  ],
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: 'bottom',
+                      labels: {
+                        color: '#00ff99',
+                        padding: 20
+                      }
                     }
                   }
-                }
-              }}
-            />
+                }}
+              />
+            ) : (
+              <div className="chart-loading">Chart loading...</div>
+            )}
           </div>
         </div>
 
@@ -395,32 +430,36 @@ export default function Page() {
         <div className="chartBox">
           <h3>CO₂ miqdori (ppm)</h3>
           <div className="chart-container">
-            <Pie
-              data={{
-                labels: ["CO₂", "Boshqa"],
-                datasets: [
-                  {
-                    data: [current.co2 / 10, 100 - current.co2 / 10],
-                    backgroundColor: ["#66ffb2", "#333"],
-                    borderWidth: 1,
-                    borderColor: '#00ff99'
-                  },
-                ],
-              }}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    position: 'bottom',
-                    labels: {
-                      color: '#00ff99',
-                      padding: 20
+            {chartReady ? (
+              <Pie
+                data={{
+                  labels: ["CO₂", "Boshqa"],
+                  datasets: [
+                    {
+                      data: [current.co2 / 10, 100 - current.co2 / 10],
+                      backgroundColor: ["#66ffb2", "#333"],
+                      borderWidth: 1,
+                      borderColor: '#00ff99'
+                    },
+                  ],
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      position: 'bottom',
+                      labels: {
+                        color: '#00ff99',
+                        padding: 20
+                      }
                     }
                   }
-                }
-              }}
-            />
+                }}
+              />
+            ) : (
+              <div className="chart-loading">Chart loading...</div>
+            )}
           </div>
         </div>
       </div>

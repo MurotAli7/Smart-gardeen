@@ -2,103 +2,114 @@
   background: #0a0a0a;
   color: #00ff99;
   min-height: 100vh;
-  padding: 20px;
+  padding: 10px;
   font-family: 'Arial', sans-serif;
+  width: 100%;
+  overflow-x: hidden;
 }
 
+/* Header */
 .header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 30px;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #00ff99;
+  gap: 8px;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #00ff99;
+  text-align: center;
 }
 
 .header h1 {
   margin: 0;
-  font-size: 2.5rem;
-  text-shadow: 0 0 10px #00ff99;
+  font-size: 1.4rem;
+  text-shadow: 0 0 8px #00ff99;
+  line-height: 1.2;
 }
 
 .time {
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   background: #1a1a1a;
-  padding: 10px 20px;
-  border-radius: 10px;
+  padding: 6px 12px;
+  border-radius: 6px;
   border: 1px solid #00ff99;
 }
 
+/* Cards */
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 15px;
 }
 
 .card {
   background: #1a1a1a;
-  padding: 20px;
-  border-radius: 15px;
+  padding: 10px 6px;
+  border-radius: 6px;
   border: 1px solid #00ff99;
   text-align: center;
-  box-shadow: 0 0 15px rgba(0, 255, 153, 0.3);
-  transition: transform 0.3s ease;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 25px rgba(0, 255, 153, 0.5);
+  box-shadow: 0 0 8px rgba(0, 255, 153, 0.3);
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .card h3 {
-  margin: 0 0 10px 0;
-  font-size: 1rem;
+  margin: 0 0 4px 0;
+  font-size: 0.7rem;
   color: #99ffcc;
+  line-height: 1.1;
 }
 
 .card p {
   margin: 0;
-  font-size: 1.8rem;
+  font-size: 1rem;
   font-weight: bold;
   color: #00ff99;
+  line-height: 1.1;
 }
 
+/* Charts */
 .charts {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 25px;
+  grid-template-columns: 1fr;
+  gap: 12px;
 }
 
 .chartBox {
   background: #1a1a1a;
-  padding: 20px;
-  border-radius: 15px;
+  padding: 10px;
+  border-radius: 8px;
   border: 1px solid #00ff99;
-  box-shadow: 0 0 15px rgba(0, 255, 153, 0.3);
+  box-shadow: 0 0 8px rgba(0, 255, 153, 0.3);
 }
 
 .chart-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 8px;
+  gap: 6px;
 }
 
 .chart-header h3 {
   margin: 0;
   color: #99ffcc;
+  font-size: 0.8rem;
+  line-height: 1.1;
 }
 
 .reset-btn {
   background: #1a1a1a;
   color: #00ff99;
   border: 1px solid #00ff99;
-  border-radius: 5px;
-  padding: 5px 12px;
+  border-radius: 4px;
+  padding: 3px 6px;
   cursor: pointer;
-  font-size: 0.8rem;
-  transition: all 0.3s ease;
+  font-size: 0.6rem;
+  white-space: nowrap;
 }
 
 .reset-btn:hover {
@@ -107,7 +118,7 @@
 }
 
 .chart-container {
-  height: 300px;
+  height: 180px;
   position: relative;
   cursor: grab;
 }
@@ -118,16 +129,17 @@
 
 .zoom-instructions {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  background: rgba(26, 26, 26, 0.9);
-  padding: 6px 10px;
-  border-radius: 6px;
+  top: 3px;
+  left: 3px;
+  background: rgba(26, 26, 26, 0.95);
+  padding: 3px 5px;
+  border-radius: 4px;
   border: 1px solid #00ff99;
-  font-size: 0.7rem;
+  font-size: 0.55rem;
   color: #99ffcc;
   z-index: 10;
   pointer-events: none;
+  line-height: 1.1;
 }
 
 .chart-loading {
@@ -136,87 +148,167 @@
   justify-content: center;
   height: 100%;
   color: #00ff99;
-  font-size: 1.1rem;
+  font-size: 0.7rem;
+  text-align: center;
+  padding: 0 8px;
 }
 
-/* Chart.js custom styles */
-.chartjs-tooltip {
-  background: rgba(0, 0, 0, 0.9) !important;
-  border: 1px solid #00ff99 !important;
-  border-radius: 8px !important;
-  color: #00ff99 !important;
-  padding: 10px !important;
-  backdrop-filter: blur(10px);
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .header {
-    flex-direction: column;
-    gap: 15px;
-    text-align: center;
-  }
-  
-  .header h1 {
-    font-size: 2rem;
-  }
-  
-  .cards {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  }
-  
-  .charts {
-    grid-template-columns: 1fr;
-  }
-  
-  .chartBox {
-    padding: 15px;
-  }
-  
-  .chart-container {
-    height: 250px;
-  }
-  
-  .chart-header {
-    flex-direction: column;
-    gap: 10px;
-    align-items: flex-start;
-  }
-  
-  .zoom-instructions {
-    font-size: 0.6rem;
-    padding: 4px 8px;
-  }
-}
-
-@media (max-width: 480px) {
+/* 380px dan katta ekranlar uchun */
+@media (min-width: 381px) {
   .dashboard {
-    padding: 15px;
+    padding: 20px;
+  }
+  
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+    gap: 15px;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
   }
   
   .header h1 {
-    font-size: 1.5rem;
+    font-size: 2.5rem;
   }
   
   .time {
-    font-size: 1rem;
-    padding: 8px 16px;
+    font-size: 1.2rem;
+    padding: 10px 20px;
   }
   
   .cards {
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
   }
   
   .card {
-    padding: 15px;
+    padding: 20px;
+    border-radius: 15px;
+    min-height: 80px;
   }
   
   .card h3 {
-    font-size: 0.9rem;
+    font-size: 1rem;
+    margin-bottom: 10px;
   }
   
   .card p {
-    font-size: 1.4rem;
+    font-size: 1.8rem;
+  }
+  
+  .charts {
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 25px;
+  }
+  
+  .chartBox {
+    padding: 20px;
+    border-radius: 15px;
+  }
+  
+  .chart-header {
+    margin-bottom: 15px;
+  }
+  
+  .chart-header h3 {
+    font-size: 1rem;
+  }
+  
+  .reset-btn {
+    padding: 5px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .chart-container {
+    height: 300px;
+  }
+  
+  .zoom-instructions {
+    font-size: 0.7rem;
+    padding: 6px 10px;
+    top: 10px;
+    left: 10px;
+  }
+  
+  .chart-loading {
+    font-size: 1.1rem;
   }
 }
+
+/* 320px dan kichik ekranlar uchun (juda kichik telefonlar) */
+@media (max-width: 320px) {
+  .dashboard {
+    padding: 8px;
+  }
+  
+  .header h1 {
+    font-size: 1.2rem;
+  }
+  
+  .time {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+  }
+  
+  .cards {
+    gap: 6px;
+  }
+  
+  .card {
+    padding: 8px 4px;
+    min-height: 55px;
+  }
+  
+  .card h3 {
+    font-size: 0.65rem;
+  }
+  
+  .card p {
+    font-size: 0.9rem;
+  }
+  
+  .chartBox {
+    padding: 8px;
+  }
+  
+  .chart-header h3 {
+    font-size: 0.75rem;
+  }
+  
+  .reset-btn {
+    padding: 2px 4px;
+    font-size: 0.55rem;
+  }
+  
+  .chart-container {
+    height: 160px;
+  }
+  
+  .zoom-instructions {
+    font-size: 0.5rem;
+    padding: 2px 4px;
+  }
+}
+
+/* Landscape orientation uchun telefonlarda */
+@media (max-height: 500px) and (orientation: landscape) {
+  .dashboard {
+    padding: 8px;
+  }
+  
+  .header {
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+  }
+  
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
+    margin-bottom: 10px;
+  }
+  
+  .chart-container {
+    height: 150px;
+  }
+}   
